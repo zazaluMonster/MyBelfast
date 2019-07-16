@@ -1,4 +1,4 @@
-Demo地址： http://47.111.146.215:8080/MyBelfast/
+[Demo地址](http://47.111.146.215:8080/MyBelfast/)  
 
 # 项目说明
 
