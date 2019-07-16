@@ -5,6 +5,16 @@
          version="4.0">
 	<display-name>MyBelfast_Web</display-name>
 
+	<welcome-file-list>
+		<welcome-file>/index.html</welcome-file>
+	</welcome-file-list>
+
+	<!-- 当结合vue前端开发，router采用history模式的时候，必须使用如下方式去跳转请求给router，不然请求会被服务器误认为不存在的链接，从而报404错误。所以我们要在这里将所有的404请求都跳转至index.html上，然后就会触发router的路径控制了 -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/index.html</location>
+	</error-page>
+
 	<!-- 针对POST请求设置编码过滤器，SpringMvc提供给我们了一个编码过滤器，还是很好用的 -->
 	<filter>
 		<filter-name>CharacterEncodingFilter</filter-name>
@@ -59,14 +69,6 @@
 		<session-timeout>120</session-timeout>
 	</session-config>
 
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
-
-	<error-page>
-		<error-code>404</error-code>
-		<location>/static/NotFound.html</location>
-	</error-page>
 
 	<error-page>
 		<exception-type>java.lang.NullPointerException</exception-type>

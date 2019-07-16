@@ -25,9 +25,42 @@
 		<property name="username" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
 		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="testWhileIdle" value="true"/>
+		<property name="testOnBorrow" value="false"/>
+		<property name="validationQuery" value="SELECT 1"/>
 	</bean>
 
-	<mybatis:scan base-package="mapper"/>
+	<mybatis:scan base-package="com.h_mapper"/>
 
+	<!-- 事务管理 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!-- TODO 测下没有在<tx:method name="update*"/>控制的一些方法存不存在事务 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 方法名后缀Transaction的全都加入Spring事务管理 -->
+	<tx:advice id="txAdviceForOther" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="*Transaction"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="ct" expression="execution(* com.b_controller..*(..))" />
+		<aop:pointcut id="sv" expression="execution(* com.c_service..*(..))" />
+		<aop:pointcut id="dao" expression="execution(* com.d_dao..*(..))" />
+		<aop:pointcut id="mapper" expression="execution(* com..*(..))" />
+		<aop:pointcut id="other" expression="execution(* com.h_mapper..*(..))" />
+		<aop:advisor pointcut-ref="ct" advice-ref="txAdvice" />
+		<aop:advisor pointcut-ref="sv" advice-ref="txAdvice" />
+		<aop:advisor pointcut-ref="dao" advice-ref="txAdvice" />
+		<aop:advisor pointcut-ref="other" advice-ref="txAdviceForOther" />
+	</aop:config>
 
 </beans>

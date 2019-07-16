@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.h_mapper.NewsMapper">
+
+	<cache/>
+
+	<resultMap id="newsResultMap" type="com.a_pojo.News">
+		<id property="id" column="id" />
+		<result property="title" column="title"/>
+		<result property="hits" column="hits"/>
+		<result property="outTime" column="outTime"/>
+		<result property="tag" column="tag"/>
+		<result property="url" column="url"/>
+	</resultMap>
+
+	<select id="selects" resultMap="newsResultMap" parameterType="map">
+		select
+		id,
+		title,
+		hits,
+		outTime,
+		tag,
+		url
+		from NEWS
+		<trim prefix="WHERE" prefixOverrides="AND ">
+			<if test="item.id > 0">
+				AND id = #{item.id,jdbcType=NUMERIC}
+			</if>
+			<if test="item.title != null and item.title != ''">
+				AND title = #{item.title,jdbcType=VARCHAR}
+			</if>
+			<if test="item.hits != null">
+				AND hits = #{item.hits,jdbcType=NUMERIC}
+			</if>
+			<if test="item.outTime != null and item.outTime != ''">
+				AND outTime = #{item.outTime,jdbcType=VARCHAR}
+			</if>
+			<if test="item.tag != null and item.tag != ''">
+				AND tag = #{item.tag,jdbcType=VARCHAR}
+			</if>
+			<if test="item.url != null and item.url != ''">
+				AND url = #{item.url,jdbcType=VARCHAR}
+			</if>
+		</trim>
+		order by id asc
+	</select>
+
+	<select id="selectsByIdPage" resultMap="newsResultMap" parameterType="map">
+		select
+		id,
+		title,
+		hits,
+		outTime,
+		tag,
+		url
+		from NEWS
+		<trim prefix="WHERE" prefixOverrides="AND ">
+			<if test="page > 0">
+				AND id BETWEEN #{pageStart ,jdbcType=NUMERIC} AND #{pageEnd,jdbcType=NUMERIC}
+			</if>
+		</trim>
+		order by id asc
+	</select>
+
+	<insert id="inserts" useGeneratedKeys="true" keyProperty="id">
+		insert into NEWS
+		(
+		title,
+		hits,
+		outTime,
+		tag,
+		url
+		)
+		values
+		<foreach item="item" collection="list" separator=",">
+		   (
+		    	#{item.title,jdbcType=VARCHAR},
+		    	#{item.hits,jdbcType=NUMERIC},
+		    	#{item.outTime,jdbcType=VARCHAR},
+		    	#{item.tag,jdbcType=VARCHAR},
+		    	#{item.url,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="delete">
+		delete from NEWS where id = #{id}
+	</delete>
+
+	<delete id="deletes">
+		delete from NEWS where id in
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
+	<delete id="deleteAll">
+		truncate NEWS
+	</delete>
+
+	<update id="update" >
+		update NEWS set
+		<trim prefix="" suffixOverrides=",">
+			<if test="item.title != null and item.title != ''">
+				title = #{item.title,jdbcType=VARCHAR},
+			</if>
+			<if test="item.hits != null">
+				hits = #{item.hits,jdbcType=NUMERIC},
+			</if>
+			<if test="item.outTime != null and item.outTime != ''">
+				outTime = #{item.outTime,jdbcType=VARCHAR},
+			</if>
+			<if test="item.tag != null and item.tag != ''">
+				tag = #{item.tag,jdbcType=VARCHAR},
+			</if>
+			<if test="item.url != null and item.url != ''">
+				url = #{item.url,jdbcType=VARCHAR},
+			</if>
+		</trim>
+		where id id = #{item.id}
+	</update>
+
+	<!-- TODO 这种row-by-row方式以后改成更高效的 -->
+	<update id="updates">
+		<foreach collection="items" item="item" open="" close="" separator=";">
+			update NEWS set
+			<trim prefix="" suffixOverrides=",">
+				<if test="item.title != null and item.title != ''">
+					title = #{item.title,jdbcType=VARCHAR},
+				</if>
+				<if test="item.hits != null">
+					hits = #{item.hits,jdbcType=NUMERIC},
+				</if>
+				<if test="item.outTime != null and item.outTime != ''">
+					outTime = #{item.outTime,jdbcType=VARCHAR},
+				</if>
+				<if test="item.tag != null and item.tag != ''">
+					tag = #{item.tag,jdbcType=VARCHAR},
+				</if>
+				<if test="item.url != null and item.url != ''">
+					url = #{item.url,jdbcType=VARCHAR},
+				</if>
+			</trim>
+			where id = ${item.id}
+		</foreach>
+	</update>
+
+</mapper>
+
+
+
+

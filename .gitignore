@@ -12,7 +12,6 @@
 
 # Package Files #
 *.jar
-*.war
 *.nar
 *.ear
 *.zip
@@ -27,3 +26,6 @@ hs_err_pid*
 out/
 target/
 *.iml
+
+# class path
+web/WEB-INF/classes/

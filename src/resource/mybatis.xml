@@ -6,7 +6,7 @@
 <configuration>
 
 	<!--mybatis整合到Spring后，自己的配置文件就剩下下面这些setting。如果你使用默认设置，那么根本不需要mybatis.xml-->
-	<!--<settings>-->
+	<settings>
 	<!--	<setting name="cacheEnabled" value="true"/>-->
 	<!--	<setting name="lazyLoadingEnabled" value="true"/>-->
 	<!--	<setting name="multipleResultSetsEnabled" value="true"/>-->
@@ -22,8 +22,8 @@
 	<!--	<setting name="localCacheScope" value="SESSION"/>-->
 	<!--	<setting name="jdbcTypeForNull" value="OTHER"/>-->
 	<!--	<setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>-->
-	<!--	<setting name="logImpl" value="LOG4J"/>-->
-	<!--</settings>-->
+		<setting name="logImpl" value="LOG4J"/>
+	</settings>
 
 
 

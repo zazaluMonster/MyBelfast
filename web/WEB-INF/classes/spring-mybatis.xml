@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+
+	<context:property-placeholder location="classpath:properties/db.properties"/>
+
+	<!-- Mybatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 当你不想使用mybatis的默认配置（settings）的时候，指定你的mybatis配置文件路径 -->
+		<property name="configLocation" value="classpath:mybatis.xml"/>
+	</bean>
+
+	<!-- 阿里巴巴数据池 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+			destroy-method="close">
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="testWhileIdle" value="true"/>
+		<property name="testOnBorrow" value="false"/>
+		<property name="validationQuery" value="SELECT 1"/>
+	</bean>
+
+	<mybatis:scan base-package="com.h_mapper"/>
+
+	<!-- 事务管理 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!-- TODO 测下没有在<tx:method name="update*"/>控制的一些方法存不存在事务 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 方法名后缀Transaction的全都加入Spring事务管理 -->
+	<tx:advice id="txAdviceForOther" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="*Transaction"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="ct" expression="execution(* com.b_controller..*(..))" />
+		<aop:pointcut id="sv" expression="execution(* com.c_service..*(..))" />
+		<aop:pointcut id="dao" expression="execution(* com.d_dao..*(..))" />
+		<aop:pointcut id="mapper" expression="execution(* com..*(..))" />
+		<aop:pointcut id="other" expression="execution(* com.h_mapper..*(..))" />
+		<aop:advisor pointcut-ref="ct" advice-ref="txAdvice" />
+		<aop:advisor pointcut-ref="sv" advice-ref="txAdvice" />
+		<aop:advisor pointcut-ref="dao" advice-ref="txAdvice" />
+		<aop:advisor pointcut-ref="other" advice-ref="txAdviceForOther" />
+	</aop:config>
+
+</beans>

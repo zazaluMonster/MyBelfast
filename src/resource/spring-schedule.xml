@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
+>
+	<!--
+		我喜欢用xml配置的方式来配置定时器，因为这样是一目了然的，当然这可能不适合快速开发
+	-->
+
+	<bean id="myBelfastSchedule" class="com.l_schedule.MySchedule"/>
+
+	<!-- Configure the scheduler -->
+	<task:scheduler id="myScheduler" pool-size="10" />
+
+	<!-- Configure parameters -->
+	<task:scheduled-tasks scheduler="myScheduler">
+		<!-- 每天11点02分执行一次 -->
+		<task:scheduled ref="myBelfastSchedule" method="spiderNews"
+				cron="0 2 11 * * ?"/>
+		<task:scheduled ref="myBelfastSchedule" method="newsClean"
+				cron="0 0 11 * * ?"/>
+		<!--&lt;!&ndash; 测试 &ndash;&gt;-->
+		<!--<task:scheduled ref="myBelfastSchedule" method="spiderNews"-->
+		<!--		fixed-delay="3600000" initial-delay="1000" />-->
+	</task:scheduled-tasks>
+
+</beans>
