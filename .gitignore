@@ -27,4 +27,4 @@ target/
 *.iml
 
 # class path
-web/WEB-INF/classes/
+web/WEB-INF/classes/*
