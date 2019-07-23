@@ -46,5 +46,5 @@ comment '新闻表';
 
 alter table NEWS modify title VARCHAR(50) default '无标题' not null comment '新闻标题';
 
-
+alter table NEWS modify title VARCHAR(100) default '无标题' not null comment '新闻标题';
 

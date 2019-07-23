@@ -55,8 +55,8 @@
 		<aop:pointcut id="ct" expression="execution(* com.b_controller..*(..))" />
 		<aop:pointcut id="sv" expression="execution(* com.c_service..*(..))" />
 		<aop:pointcut id="dao" expression="execution(* com.d_dao..*(..))" />
-		<aop:pointcut id="mapper" expression="execution(* com..*(..))" />
-		<aop:pointcut id="other" expression="execution(* com.h_mapper..*(..))" />
+		<aop:pointcut id="mapper" expression="execution(* com.h_mapper.*(..))" />
+		<aop:pointcut id="other" expression="execution(* com..*(..))" />
 		<aop:advisor pointcut-ref="ct" advice-ref="txAdvice" />
 		<aop:advisor pointcut-ref="sv" advice-ref="txAdvice" />
 		<aop:advisor pointcut-ref="dao" advice-ref="txAdvice" />
